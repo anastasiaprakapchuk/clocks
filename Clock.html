@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Clock</title>
+	<style>
+		*{
+          box-sizing: border-box;
+		  margin: 0px;
+		  padding: 0px;
+		}
+
+		#DOM1,
+		#DOM2,
+		#SVG1,
+		#SVG2,
+		#CANVAS1,
+		#CANVAS2{
+			margin: 5px 10px;
+		}
+
+		.method{
+            text-align: center;
+			padding: 5px;
+			margin-bottom: 5px;
+			background-color: grey;
+			color: white;
+		}
+
+		.describe{
+			margin-bottom: 10px;
+			text-align: center;
+			font-size: 14px;
+		}
+		.start,.stop{
+			padding: 5px 10px;
+			font-size: 14px;
+			background-color: rgb(156, 194, 155);
+			border-radius: 15px;
+			color: white;
+			border-color: transparent;
+			cursor: pointer;
+		}
+
+		.stop{
+			background-color: rgb(236, 160, 160);
+			border-color: grey;			
+		}
+
+		.describe span{
+			display: block;
+			padding-top: 5px;
+		}
+
+	</style>
+	<script src="ClockModel.js"></script>
+	<script src="ClockViewDOM.js"></script>
+	<script src="ClockViewSVG.js"></script>
+	<script src="ClockViewCanvas.js"></script>
+	<script src="ClockControllerButton.js"></script>
+</head>
+<body>
+	
+	<div id='container'>
+	<div id='DOM1'>
+		<div class='method'>DOM</div>
+		<div class='describe'>
+		<input type=button class='stop' value='стоп!'>
+		<input type=button class='start' value='старт!'>
+		<span></span>
+		
+		</div>
+	</div>
+	<div id='SVG1'>
+		<div class='method'>SVG</div>
+		<div class='describe'>
+		<input type=button class='stop' value='стоп!'>
+		<input type=button class='start' value='старт!'>
+		<span></span>
+		</div>
+	</div>
+	<div id='CANVAS1'>
+		<div class='method'>CANVAS</div>
+		<div class='describe'>
+		<input type=button class='stop' value='стоп!'>
+		<input type=button class='start' value='старт!'>
+		<span></span>
+		</div>
+	</div>
+	<div id='DOM2'>
+		<div class='method'>DOM</div>
+		<div class='describe'>
+		<input type=button class='stop' value='стоп!'>
+		<input type=button class='start' value='старт!'>
+		<span></span>
+		</div>
+	</div>
+	<div id='SVG2'>
+		<div class='method'>SVG</div>
+		<div class='describe'>
+		<input type=button class='stop' value='стоп!'>
+		<input type=button class='start' value='старт!'>
+		<span></span>
+		</div>
+	</div>
+	<div id='CANVAS2'>
+		<div class='method'>CANVAS</div>
+		<div class='describe'>
+		<input type=button class='stop' value='стоп!'>
+		<input type=button class='start' value='старт!'>
+		<span></span>
+		</div>
+	</div>
+	</div>
+	
+
+	<script>
+	"use strict";
+	var R=100;
+	var elContainer=document.getElementById('container');
+	elContainer.style.cssText='font-family: Arial, Helvetica, sans-serif; display: flex;flex-flow: row wrap;align-content: space-around; width:'+2*(R+10)*3+'px';
+	sizeClock(R);//строим часы указанным радиусом 
+
+	function sizeClock(radius){
+		var radiusClock=radius;
+		var clocks=[];
+		var views=[];
+		var controllers=[];
+		var containersElem=[];
+
+    	//функция инициализации часов
+     	function initializationClock(n,city,GMT,id,ClockView){//передаем функции город, часовой пояс в виде цифры,id из HTML и нужное представление(класс)
+	       // создаём все три компонента
+	       clocks[n]=new ClockModel();
+	       views[n]=new ClockView();
+	       controllers[n]=new ClockController();
+
+           // увязываем компоненты друг с другом
+           containersElem[n]=document.getElementById(id);
+           clocks[n].startClock(views[n]);
+           views[n].startClock(clocks[n],containersElem[n]);
+           controllers[n].startClock(clocks[n],containersElem[n]);
+
+           // инициируем первичное отображение c текущим временем         
+           clocks[n].setName(city,GMT);//задаем ГОРОД и часовой пояс(цифрой)           
+           views[n].buildClock(radiusClock);//строим часы заранее
+           clocks[n].update();//обновляем представление
+        }
+
+        // инициализация часов DOM	
+        initializationClock(1,'Нью-Йорк',-5,'DOM1',ClockViewDOM);
+        initializationClock(2,'Минск',+3,'DOM2',ClockViewDOM);
+	    // инициализация часов SVG
+	    initializationClock(3,'Лондон','','SVG1',ClockViewSVG);
+	    initializationClock(4,'Токио',+9,'SVG2',ClockViewSVG);
+	    // инициализация часов CANVAS
+	    initializationClock(5,'Берлин',+1,'CANVAS1',ClockViewCANVAS);
+	    initializationClock(6,'Владивосток',+10,'CANVAS2',ClockViewCANVAS);
+    }
+    </script>
+	
+	
+</body>
+</html>
